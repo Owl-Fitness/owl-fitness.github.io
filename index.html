@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OwlyGo: your daily move, set by last night's recovery</title>
+<meta name="description" content="OwlyGo reads your overnight HRV, sleep and resting heart rate from Apple Health and suggests one move for today, with the weights and reps worked out for you.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --linen: #F9F6F1;
+    --oat: #F1EBE2;
+    --card: #FFFFFF;
+    --ink: #2A2030;
+    --fig: #594157;
+    --fig-deep: #3E2C3C;
+    --lavender: #8E7DBE;
+    --lavender-soft: #ECE8F6;
+    --marine: #3F6F98;
+    --marine-soft: #E3EDF5;
+    --sage: #3F7D57;
+    --sage-soft: #E2EFE6;
+    --amber: #B9651F;
+    --amber-soft: #F8EADB;
+    --muted: #6B5F68;
+    --line: #E4DCD0;
+    --radius: 22px;
+    --shadow: 0 1px 2px rgba(42,32,48,.05), 0 12px 32px -12px rgba(42,32,48,.18);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--linen); color: var(--ink);
+    font: 400 17px/1.6 Inter, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 600; letter-spacing: -0.015em; margin: 0; line-height: 1.12; }
+  h1 { font-size: clamp(2.3rem, 5.2vw, 3.9rem); }
+  h2 { font-size: clamp(1.9rem, 3.6vw, 2.75rem); }
+  h3 { font-size: 1.3rem; line-height: 1.25; }
+  p { margin: 0; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .eyebrow { font: 600 .78rem/1 Inter, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--fig); }
+  .lede { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--muted); max-width: 640px; }
+  .center { text-align: center; }
+  .center .lede { margin-inline: auto; }
+  .head { display: grid; gap: 16px; margin-bottom: clamp(36px, 5vw, 56px); }
+
+  /* Navigation */
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(249,246,241,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .2s; }
+  nav.scrolled { border-bottom-color: var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.25rem Fraunces, serif; }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
+  .nav-links { display: flex; align-items: center; gap: 28px; font-size: .95rem; font-weight: 500; }
+  .nav-links a { text-decoration: none; color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); }
+  @media (max-width: 760px) { .nav-links a:not(.store) { display: none; } }
+
+  /* App Store button (swap for Apple's official badge at launch) */
+  .store {
+    display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+    background: var(--ink); color: #fff !important; border-radius: 14px; padding: 12px 22px 12px 18px;
+    box-shadow: 0 10px 24px -10px rgba(42,32,48,.55); transition: transform .15s, box-shadow .15s, background .15s;
+  }
+  .store:hover { transform: translateY(-1px); background: var(--fig-deep); box-shadow: 0 14px 28px -10px rgba(42,32,48,.6); }
+  .store:focus-visible { outline: 3px solid var(--lavender); outline-offset: 3px; }
+  .store svg { width: 26px; height: 26px; flex: none; }
+  .store span { display: grid; line-height: 1.1; text-align: left; }
+  .store small { font-size: .72rem; opacity: .85; letter-spacing: .02em; }
+  .store b { font-size: 1.2rem; font-weight: 600; }
+  .store.sm { padding: 8px 14px; border-radius: 11px; gap: 8px; box-shadow: none; }
+  .store.sm svg { width: 18px; height: 18px; }
+  .store.sm b { font-size: .92rem; }
+  .store.sm small { display: none; }
+  .store.lg b { font-size: 1.35rem; }
+
+  /* Hero */
+  .hero { padding-top: clamp(40px, 6vw, 72px); position: relative; }
+  .hero::before {
+    content: ""; position: absolute; inset: -120px 0 auto; height: 760px; z-index: -1;
+    background: radial-gradient(600px 420px at 85% 30%, rgba(142,125,190,.22), transparent 70%),
+                radial-gradient(520px 380px at 10% 10%, rgba(248,199,140,.28), transparent 70%),
+                radial-gradient(500px 400px at 60% 90%, rgba(79,134,181,.14), transparent 70%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+  .hero-copy { display: grid; gap: 24px; justify-items: start; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--line); font-size: .88rem; font-weight: 600; color: var(--fig);
+    box-shadow: 0 1px 2px rgba(42,32,48,.04);
+  }
+  .hero h1 em { font-style: normal; color: var(--fig); background: linear-gradient(transparent 62%, rgba(142,125,190,.28) 62%); }
+  .trust { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .9rem; color: var(--muted); }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lavender); }
+  .phones { position: relative; height: clamp(520px, 52vw, 640px); }
+  .phone {
+    position: absolute; width: clamp(230px, 22vw, 290px); aspect-ratio: 542 / 1180; border-radius: 44px; overflow: hidden;
+    background: #111; padding: 9px; box-shadow: 0 40px 70px -30px rgba(42,32,48,.55), 0 0 0 1px rgba(0,0,0,.06);
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 36px; }
+  .phone.front { right: 18%; top: 0; z-index: 2; }
+  .phone.back { right: 0; top: 64px; transform: rotate(6deg); opacity: .96; }
+  .float-card {
+    position: absolute; z-index: 3; left: 0; bottom: 72px; background: var(--card); border-radius: 18px; padding: 14px 18px;
+    box-shadow: var(--shadow); display: flex; gap: 12px; align-items: center; font-size: .9rem; max-width: 250px;
+  }
+  .float-card .dot { width: 38px; height: 38px; border-radius: 12px; background: var(--sage-soft); color: var(--sage); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .float-card b { display: block; font-size: .95rem; }
+  .float-card small { color: var(--muted); }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .phones { height: 500px; max-width: 420px; width: 100%; margin-inline: auto; }
+    .phone { width: 220px; }
+    .phone.front { right: auto; left: 8%; }
+    .phone.back { right: 2%; }
+    .float-card { left: auto; right: 0; bottom: 24px; }
+  }
+  @media (max-width: 420px) { .phone { width: 190px; } .phones { height: 440px; } .float-card { max-width: 200px; padding: 10px 12px; font-size: .8rem; bottom: 40px; } .float-card .dot { width: 30px; height: 30px; } .float-card b { font-size: .85rem; } }
+
+  /* Wearables */
+  .strip { padding: 40px 0 56px; }
+  .strip .eyebrow { color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 22px 0 18px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 14px;
+    background: var(--card); border: 1px solid var(--line); font-weight: 600; font-size: 1rem;
+  }
+  .chip i { font-style: normal; font-size: 1.2rem; }
+  .strip p { color: var(--muted); font-size: .95rem; }
+
+  /* Cards */
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 980px) { .grid4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 860px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .grid4 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+  .pain { display: grid; gap: 18px; align-content: start; }
+  .pain .num { font: 600 .8rem Inter; color: var(--muted); letter-spacing: .1em; }
+  .pain .label { font: 700 .74rem Inter; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .pain .problem { color: var(--muted); font-size: .98rem; }
+  .pain .problem .label { color: var(--amber); }
+  .pain .fix { background: var(--lavender-soft); border-radius: 14px; padding: 16px; font-size: .98rem; }
+  .pain .fix .label { color: var(--fig); }
+
+  /* How it works */
+  .how { background: var(--oat); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; }
+  .step { position: relative; display: grid; gap: 18px; align-content: start; }
+  .step .shot { border-radius: 18px; overflow: hidden; background: var(--linen); aspect-ratio: 4 / 3.1; }
+  .step .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .step .n { width: 36px; height: 36px; border-radius: 50%; background: var(--fig); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .step .row { display: flex; align-items: center; gap: 12px; }
+  .step p { color: var(--muted); font-size: .98rem; }
+  .step:not(:last-child)::after {
+    content: ""; position: absolute; top: 50%; right: -16px; width: 12px; height: 12px; z-index: 2;
+    border-top: 2px solid var(--fig); border-right: 2px solid var(--fig); transform: translateY(-50%) rotate(45deg); opacity: .5;
+  }
+  .step .shot.sleep-art { height: auto; display: grid; place-items: center; background: linear-gradient(160deg, #2E2540, #4B3B63 60%, #6B5A86); position: relative; }
+  .sleep-art .moon { width: 64px; height: 64px; border-radius: 50%; box-shadow: -14px 6px 0 0 #F6E3C1; transform: translateX(10px); }
+  .sleep-art .stars i { position: absolute; width: 3px; height: 3px; background: #F6E3C1; border-radius: 50%; opacity: .8; }
+  .sleep-art .metrics { position: absolute; bottom: 14px; left: 14px; right: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .sleep-art .metrics span { background: rgba(255,255,255,.14); color: #fff; font-size: .78rem; font-weight: 600; padding: 6px 10px; border-radius: 999px; }
+  @media (max-width: 860px) {
+    .steps { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; }
+    .step:not(:last-child)::after { top: auto; bottom: -18px; right: 50%; transform: translateX(50%) rotate(135deg); }
+  }
+
+  /* Moves */
+  .move { display: grid; gap: 14px; align-content: start; border-top: 5px solid var(--c); }
+  .move .ic { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.6rem; background: var(--cs); }
+  .move p { color: var(--muted); font-size: .96rem; }
+  .move.strength { --c: var(--fig); --cs: var(--lavender-soft); }
+  .move.cardio { --c: var(--amber); --cs: var(--amber-soft); }
+  .move.flow { --c: var(--marine); --cs: var(--marine-soft); }
+  .move.rest { --c: var(--sage); --cs: var(--sage-soft); }
+
+  /* Features */
+  .features { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+  .features .phone { position: relative; margin-inline: auto; width: min(290px, 70vw); }
+  .feat { display: grid; gap: 10px; }
+  .feat .ic { width: 44px; height: 44px; border-radius: 13px; background: var(--lavender-soft); color: var(--fig); display: grid; place-items: center; }
+  .feat .ic svg { width: 22px; height: 22px; }
+  .feat p { color: var(--muted); font-size: .97rem; }
+  @media (max-width: 900px) { .features { grid-template-columns: 1fr; } }
+
+  /* Testimonials (placeholders until real beta quotes) */
+  .quote { display: grid; gap: 18px; border: 2px dashed var(--line); box-shadow: none; background: transparent; }
+  .quote .tag { justify-self: start; font: 700 .72rem Inter; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); background: var(--amber-soft); padding: 6px 10px; border-radius: 8px; }
+  .quote blockquote { margin: 0; font: 500 1.15rem/1.5 Fraunces, serif; color: var(--muted); }
+  .quote cite { font-style: normal; font-size: .92rem; color: var(--muted); }
+
+  /* FAQ */
+  .faq { max-width: 820px; margin-inline: auto; display: grid; gap: 12px; }
+  details { background: var(--card); border-radius: 18px; padding: 0 24px; box-shadow: 0 1px 2px rgba(42,32,48,.05); border: 1px solid var(--line); }
+  summary { list-style: none; cursor: pointer; padding: 20px 0; font-weight: 600; font-size: 1.05rem; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font: 400 1.6rem/1 Inter; color: var(--fig); transition: transform .2s; flex: none; }
+  details[open] summary::after { transform: rotate(45deg); }
+  summary:focus-visible { outline: 3px solid var(--lavender); outline-offset: 4px; border-radius: 6px; }
+  details p { padding: 0 0 22px; color: var(--muted); }
+
+  /* Final CTA */
+  .final { padding-bottom: 72px; }
+  .cta-band {
+    background: radial-gradient(500px 300px at 85% 0%, rgba(142,125,190,.45), transparent 70%), linear-gradient(150deg, var(--fig-deep), var(--ink));
+    color: #fff; border-radius: 32px; padding: clamp(40px, 6vw, 72px); display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; overflow: hidden;
+  }
+  .cta-band p { color: rgba(255,255,255,.78); font-size: 1.1rem; margin-top: 14px; max-width: 520px; }
+  .cta-band .store { background: #fff; color: var(--ink) !important; margin-top: 28px; }
+  .cta-band .store:hover { background: var(--oat); }
+  .cta-band .owl { width: 200px; height: 200px; border-radius: 50%; background: var(--linen); overflow: hidden; box-shadow: 0 0 0 10px rgba(255,255,255,.08); }
+  @media (max-width: 760px) { .cta-band { grid-template-columns: 1fr; } .cta-band .owl { width: 140px; height: 140px; order: -1; } }
+
+  footer { padding: 36px 0 48px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+  footer .wrap { display: grid; gap: 12px; }
+  footer .links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  footer .links a { text-decoration: none; font-weight: 500; color: var(--ink); }
+  footer .links a:hover { text-decoration: underline; }
+  footer .fine { font-size: .82rem; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="phone-ic" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+</svg>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/icon.png" alt="">OwlyGo</a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#moves">Daily moves</a>
+      <a href="#faq">FAQ</a>
+      <a class="store sm" href="#download" aria-label="Download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Download on the</small><b>App Store</b></span></a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- 1. Hero -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="badge">⚡ Powered by Your Apple Health Recovery Metrics</span>
+      <h1>Stop Overtraining on Low Sleep. <em>Know Your Exact Weights &amp; Reps Today.</em></h1>
+      <p class="lede">OwlyGo reads your overnight recovery metrics (HRV, sleep and resting heart rate) from your Apple Watch, Oura Ring or WHOOP band via Apple Health. Your coach, Owly, works out today's workout load before you pick up a weight. Zero decision fatigue. Zero gym guilt.</p>
+      <a class="store lg" href="#download" aria-label="Download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Download on the</small><b>App Store</b></span></a>
+      <div class="trust">
+        <span>Designed for busy parents &amp; professionals (30+)</span>
+        <span>Syncs via Apple Health</span>
+        <span>First month free</span>
+      </div>
+    </div>
+    <div class="phones" aria-label="OwlyGo's Today screen in the Sunlit and Alpine themes">
+      <div class="phone back"><img src="assets/today_alpine.jpg" alt="OwlyGo Today screen in the Alpine theme"></div>
+      <div class="phone front"><img src="assets/today_sunlit.jpg" alt="OwlyGo Today screen: recovery status Green, Ready to train, with today's strength move, Upper A, 45 minutes"></div>
+      <div class="float-card" aria-hidden="true">
+        <div class="dot">✓</div>
+        <div><b>Ready to train</b><small>HRV 55 ms · usual 49–55</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Wearables -->
+<section class="strip center">
+  <div class="wrap">
+    <div class="eyebrow">Works with your favorite wearable</div>
+    <div class="chips">
+      <span class="chip"><i>⌚</i>Apple Watch</span>
+      <span class="chip"><i>💍</i>Oura Ring</span>
+      <span class="chip"><i>⚡</i>WHOOP Band</span>
+      <span class="chip"><i>📱</i>Apple Health Hub</span>
+    </div>
+    <p>OwlyGo reads synced overnight HRV and sleep data from any device connected to Apple Health.</p>
+  </div>
+</section>
+
+<!-- 3. Pain points -->
+<section id="why">
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>Built for Busy Lives, Not Impossible Schedules</h2>
+      <p class="lede">When you're juggling work, kids and daily fatigue, traditional fitness apps treat every day like a championship game. OwlyGo breaks the burnout cycle.</p>
+    </div>
+    <div class="grid3">
+      <article class="card pain reveal">
+        <span class="num">01</span>
+        <h3>The "All-or-Nothing" Trap</h3>
+        <div class="problem"><div class="label">The problem</div>You finally find 30 free minutes to work out, but you're running on 5 hours of sleep. You push through a high-intensity workout anyway, end up painfully sore for three days, crash, and quit for two weeks.</div>
+        <div class="fix"><div class="label">The OwlyGo fix</div>Owly scales your daily weight and rep targets to match your actual physiological energy.</div>
+      </article>
+      <article class="card pain reveal">
+        <span class="num">02</span>
+        <h3>Workout Decision Fatigue</h3>
+        <div class="problem"><div class="label">The problem</div>You step into your home workout space or gym and spend 10 minutes trying to remember what exercises, weights or reps to do.</div>
+        <div class="fix"><div class="label">The OwlyGo fix</div>You get exactly One Move Per Day, worked out and ready the moment you open the app.</div>
+      </article>
+      <article class="card pain reveal">
+        <span class="num">03</span>
+        <h3>Gym Guilt &amp; Streak Pressure</h3>
+        <div class="problem"><div class="label">The problem</div>Most apps shame you with broken streaks or red rings when your body desperately needs rest.</div>
+        <div class="fix"><div class="label">The OwlyGo fix</div>Owly values recovery. On low-sleep days, a light mobility session or rest day counts as real progress.</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 4. How it works -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>How OwlyGo Protects Your Energy</h2>
+      <p class="lede">One clear move per day. Zero guesswork.</p>
+    </div>
+    <div class="steps">
+      <div class="step card reveal">
+        <div class="shot sleep-art" aria-hidden="true">
+          <div class="stars"><i style="top:18%;left:20%"></i><i style="top:30%;left:72%"></i><i style="top:12%;left:58%"></i><i style="top:44%;left:14%"></i><i style="top:22%;left:86%"></i></div>
+          <div class="moon"></div>
+          <div class="metrics"><span>HRV</span><span>Resting heart rate</span><span>Sleep</span></div>
+        </div>
+        <div class="row"><span class="n">1</span><h3>Sleep &amp; Track</h3></div>
+        <p>Wear your Apple Watch, Oura Ring or WHOOP band to sleep. OwlyGo pulls your overnight heart rate variability (HRV), resting heart rate and sleep duration straight from Apple Health.</p>
+      </div>
+      <div class="step card reveal">
+        <div class="shot"><img src="assets/insights_alpine.jpg" alt="OwlyGo Insights: last night's HRV, resting heart rate and sleep against your usual" loading="lazy"></div>
+        <div class="row"><span class="n">2</span><h3>Get Your Morning Readout</h3></div>
+        <p>Open OwlyGo to see your recovery status. Before you even get out of bed, Owly checks your readings against your usual and prepares your session.</p>
+      </div>
+      <div class="step card reveal">
+        <div class="shot"><img src="assets/workout_sunlit.jpg" alt="A live OwlyGo workout: dumbbell bench press, 10 lb for 8 reps, with a drawing of the move" loading="lazy"></div>
+        <div class="row"><span class="n">3</span><h3>Do Today's Move</h3></div>
+        <p>High-recovery day? Owly steps up your weights and reps when you're ready. Low-recovery day? Owly turns your session into a light mobility flow or a rest day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Moves -->
+<section id="moves">
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>The "One Move Per Day" System</h2>
+      <p class="lede">Every day brings one clear, single-focus suggestion, in line with your weekly health or muscle-building goals.</p>
+    </div>
+    <div class="grid4">
+      <article class="card move strength reveal"><div class="ic">💪</div><h3>Strength</h3><p>Home or gym. Dumbbell or barbell workouts with your weights, reps and sets worked out for you.</p></article>
+      <article class="card move cardio reveal"><div class="ic">🏃</div><h3>Cardio</h3><p>Walking or running, outside or on a treadmill, plus cycling or swimming, sized to how recovered you are.</p></article>
+      <article class="card move flow reveal"><div class="ic">🧘</div><h3>Flow</h3><p>Guided mobility, dynamic stretches and joint care for active recovery on medium-energy days.</p></article>
+      <article class="card move rest reveal"><div class="ic">😴</div><h3>Rest</h3><p>Easy recovery days, where resting counts as real progress toward the long game.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Features -->
+<section class="how">
+  <div class="wrap">
+    <div class="head reveal">
+      <h2>Smart Features Built for Real Life</h2>
+    </div>
+    <div class="features">
+      <div class="phone reveal"><img src="assets/today_neon.jpg" alt="OwlyGo Today screen in the dark Neon theme: Ready to train, with today's strength move" loading="lazy"></div>
+      <div class="grid2">
+        <div class="feat card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+          <h3>Load &amp; Rep Scaling</h3>
+          <p>Never guess your weights again. When your overnight HRV is well below your usual, OwlyGo dials back today's volume, so a short night doesn't turn into a hard session.</p>
+        </div>
+        <div class="feat card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"/></svg></div>
+          <h3>Home Dumbbells or Full Gym</h3>
+          <p>Whether you have a single pair of home dumbbells or a commercial gym, OwlyGo fits every Strength move to the equipment you have.</p>
+        </div>
+        <div class="feat card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M4 12h16M4 18h7"/><circle cx="17" cy="6" r="2"/><circle cx="14" cy="18" r="2"/></svg></div>
+          <h3>You Stay in Control</h3>
+          <p>Owly guides, you decide. Adjust weights, swap exercises or change reps whenever you like.</p>
+        </div>
+        <div class="feat card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+          <h3>Goal-Based Weekly Plans</h3>
+          <p>Set your focus, from General Health (150–300 active minutes a week) to Muscle Building (each muscle group 2–4 times a week), and Owly plans the days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Testimonials: placeholders until real beta testers give permission -->
+<section>
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>What Beta Testers Say</h2>
+      <p class="lede">Real quotes from OwlyGo's beta testers will appear here.</p>
+    </div>
+    <div class="grid2">
+      <!-- A sample quote written by the founder, not said by a real customer. Replace it with a beta tester's own words, with their permission, before this page goes live. -->
+      <figure class="card quote reveal" style="margin:0">
+        <span class="tag">Sample quote · not a real customer yet</span>
+        <blockquote>"As a dad of two with a demanding work schedule, I don't have the mental bandwidth to plan workouts. OwlyGo checks my Apple Watch sleep data and tells me, 'Here are your exact weights today.' I've stayed consistent for 4 months now without burning out."</blockquote>
+        <cite>Marcus T., Product Manager · Working dad, 38</cite>
+      </figure>
+      <figure class="card quote reveal" style="margin:0">
+        <span class="tag">Placeholder</span>
+        <blockquote>A beta tester's own words, used with their permission.</blockquote>
+        <cite>First name and initial, role</cite>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FAQ -->
+<section class="how" id="faq">
+  <div class="wrap">
+    <div class="head center reveal"><h2>Frequently Asked Questions</h2></div>
+    <div class="faq">
+      <details>
+        <summary>Do I need an Apple Watch to use OwlyGo?</summary>
+        <p>Not necessarily. OwlyGo works with Apple Watch, Oura Ring, WHOOP or any wearable that saves overnight recovery readings (HRV, resting heart rate and sleep) to Apple Health. As long as your wearable syncs to Apple Health, Owly can set your workouts.</p>
+      </details>
+      <details>
+        <summary>How does OwlyGo connect to my wearable?</summary>
+        <p>OwlyGo connects to Apple Health on your iPhone with one tap during setup. There's no other setup: Owly reads your synced recovery data every morning.</p>
+      </details>
+      <details>
+        <summary>Can I use OwlyGo if I only work out at home with dumbbells?</summary>
+        <p>Yes. OwlyGo fits your Strength moves to the equipment you have, whether that's a set of home dumbbells, resistance bands or full gym machines.</p>
+      </details>
+      <details>
+        <summary>What if I want to lift heavier or lighter than Owly suggests?</summary>
+        <p>You stay in control. Owly suggests your sets, weights and reps, and you can change any of them, up or down, in the app.</p>
+      </details>
+      <details>
+        <summary>How does OwlyGo help me avoid burnout?</summary>
+        <p>Instead of pushing for maximum effort every day, OwlyGo matches each day's workout to your overnight recovery. On low-recovery days, it shifts Today's Move to a light mobility flow or a rest day.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Final CTA -->
+<section class="final" id="download">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <div>
+        <h2>Ready to Build Strength Without Burning Out?</h2>
+        <p>Let your overnight recovery guide your daily progress.</p>
+        <a class="store lg" href="#download" aria-label="Get started with OwlyGo: download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Get started with OwlyGo</small><b>Download on iOS</b></span></a>
+      </div>
+      <div class="owl"><img src="assets/owl.png" alt="Owly, the OwlyGo coach"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <span>© 2026 OwlyGo. All rights reserved.</span>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="support.html">Contact Support</a>
+    </div>
+    <p class="fine">OwlyGo works with Apple Health. Apple Watch, Oura and WHOOP are trademarks of their respective owners. OwlyGo is for general fitness and isn't medical advice.</p>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+</script>
+</body>
+</html>
