@@ -194,11 +194,10 @@
   .feat p { color: var(--muted); font-size: .97rem; }
   @media (max-width: 900px) { .features { grid-template-columns: 1fr; } }
 
-  /* Testimonials (placeholders until real beta quotes) */
-  .quote { display: grid; gap: 18px; border: 2px dashed var(--line); box-shadow: none; background: transparent; }
-  .quote .tag { justify-self: start; font: 700 .72rem Inter; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); background: var(--amber-soft); padding: 6px 10px; border-radius: 8px; }
-  .quote blockquote { margin: 0; font: 500 1.15rem/1.5 Fraunces, serif; color: var(--muted); }
-  .quote cite { font-style: normal; font-size: .92rem; color: var(--muted); }
+  /* Scenes from a busy week */
+  .scene { display: grid; gap: 14px; align-content: start; }
+  .scene .tag { justify-self: start; font: 700 .72rem Inter; letter-spacing: .1em; text-transform: uppercase; color: var(--fig); background: var(--amber-soft); padding: 6px 10px; border-radius: 8px; }
+  .scene-line { margin: 0; font: 500 1.15rem/1.5 Fraunces, serif; color: var(--ink, inherit); }
 
   /* FAQ */
   .faq { max-width: 820px; margin-inline: auto; display: grid; gap: 12px; }
@@ -405,25 +404,27 @@
   </div>
 </section>
 
-<!-- 7. Testimonials: placeholders until real beta testers give permission -->
+<!-- 7. Scenes from a busy week (founder, Nov 19). Moments the app handles, not customer quotes:
+     real beta testers' words go here only with their permission. -->
 <section>
   <div class="wrap">
     <div class="head center reveal">
-      <h2>What Beta Testers Say</h2>
-      <p class="lede">Real quotes from OwlyGo's beta testers will appear here.</p>
+      <h2>Built for Days Like These</h2>
+      <p class="lede">A busy week rarely goes to plan. OwlyGo bends with it.</p>
     </div>
-    <div class="grid2">
-      <!-- A sample quote written by the founder, not said by a real customer. Replace it with a beta tester's own words, with their permission, before this page goes live. -->
-      <figure class="card quote reveal" style="margin:0">
-        <span class="tag">Sample quote · not a real customer yet</span>
-        <blockquote>"As a dad of two with a demanding work schedule, I don't have the mental bandwidth to plan workouts. OwlyGo checks my Apple Watch sleep data and tells me, 'Here are your weights for today.' I've stayed consistent for 4 months now without burning out."</blockquote>
-        <cite>Marcus T., Product Manager · Working dad, 38</cite>
-      </figure>
-      <figure class="card quote reveal" style="margin:0">
-        <span class="tag">Placeholder</span>
-        <blockquote>A beta tester's own words, used with their permission.</blockquote>
-        <cite>First name and initial, role</cite>
-      </figure>
+    <div class="grid3">
+      <article class="card scene reveal">
+        <span class="tag">Short night</span>
+        <p class="scene-line">Five hours of sleep. Owly lightens today's lift and tells you why.</p>
+      </article>
+      <article class="card scene reveal">
+        <span class="tag">Busy Tuesday</span>
+        <p class="scene-line">No time today? Move the workout to Thursday. Your week keeps its balance.</p>
+      </article>
+      <article class="card scene reveal">
+        <span class="tag">Back after a break</span>
+        <p class="scene-line">A week away? No guilt, no streaks. Owly welcomes you back gently.</p>
+      </article>
     </div>
   </div>
 </section>
