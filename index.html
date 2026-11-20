@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OwlyGo: your daily move, set by last night's recovery</title>
-<meta name="description" content="OwlyGo reads your overnight HRV, sleep and resting heart rate from Apple Health and suggests one move for today, with the weights and reps worked out for you.">
+<title>OwlyGo: your workout, set by your overnight recovery</title>
+<meta name="description" content="Owly reads how you slept and recovered, then suggests one move for today, with the weights worked out. Made for busy people with busy weeks.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,6 +50,7 @@
   .lede { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--muted); max-width: 640px; }
   .center { text-align: center; }
   .center .lede { margin-inline: auto; }
+  .beats { font: 600 1rem/1.4 Inter, sans-serif; color: var(--fig); margin-top: -4px; }
   .head { display: grid; gap: 16px; margin-bottom: clamp(36px, 5vw, 56px); }
 
   /* Navigation */
@@ -258,8 +259,9 @@
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <span class="badge">⚡ Powered by Your Apple Health Recovery Metrics</span>
-      <h1>Stop Overtraining on Low Sleep. <em>Know Your Exact Weights &amp; Reps Today.</em></h1>
-      <p class="lede">OwlyGo reads your overnight recovery metrics (HRV, sleep and resting heart rate) from your Apple Watch, Oura Ring or WHOOP band via Apple Health. Your coach, Owly, works out today's workout load before you pick up a weight. Zero decision fatigue. Zero gym guilt.</p>
+      <h1>Your workout, set by your <em>overnight recovery.</em></h1>
+      <p class="lede">Owly reads how you slept and recovered, then suggests one move for today, with the weights worked out. Made for busy people with busy weeks.</p>
+      <p class="beats">Reads your night. Picks your move. Adjusts as you go.</p>
       <a class="store lg" href="#download" aria-label="Download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Download on the</small><b>App Store</b></span></a>
       <div class="trust">
         <span>Designed for busy parents &amp; professionals (30+)</span>
@@ -327,7 +329,7 @@
   <div class="wrap">
     <div class="head center reveal">
       <h2>How OwlyGo Protects Your Energy</h2>
-      <p class="lede">One clear move per day. Zero guesswork.</p>
+      <p class="lede">One clear move a day.</p>
     </div>
     <div class="steps">
       <div class="step card reveal">
@@ -414,7 +416,7 @@
       <!-- A sample quote written by the founder, not said by a real customer. Replace it with a beta tester's own words, with their permission, before this page goes live. -->
       <figure class="card quote reveal" style="margin:0">
         <span class="tag">Sample quote · not a real customer yet</span>
-        <blockquote>"As a dad of two with a demanding work schedule, I don't have the mental bandwidth to plan workouts. OwlyGo checks my Apple Watch sleep data and tells me, 'Here are your exact weights today.' I've stayed consistent for 4 months now without burning out."</blockquote>
+        <blockquote>"As a dad of two with a demanding work schedule, I don't have the mental bandwidth to plan workouts. OwlyGo checks my Apple Watch sleep data and tells me, 'Here are your weights for today.' I've stayed consistent for 4 months now without burning out."</blockquote>
         <cite>Marcus T., Product Manager · Working dad, 38</cite>
       </figure>
       <figure class="card quote reveal" style="margin:0">
@@ -434,6 +436,10 @@
       <details>
         <summary>Do I need an Apple Watch to use OwlyGo?</summary>
         <p>Not necessarily. OwlyGo works with Apple Watch, Oura Ring, WHOOP or any wearable that saves overnight recovery readings (HRV, resting heart rate and sleep) to Apple Health. As long as your wearable syncs to Apple Health, Owly can set your workouts.</p>
+      </details>
+      <details>
+        <summary>Which Apple Watch do I need?</summary>
+        <p>Apple Watch Series 4 or later, or any Apple Watch SE, with watchOS 10 or later. These record the readings your daily status relies on: heart rate variability, resting heart rate and sleep, plus breathing rate while you sleep. Wrist temperature needs Series 8, Ultra or later; without it, your status uses the other readings. Wear your Watch to bed with sleep tracking turned on.</p>
       </details>
       <details>
         <summary>How does OwlyGo connect to my wearable?</summary>
@@ -460,7 +466,7 @@
   <div class="wrap">
     <div class="cta-band reveal">
       <div>
-        <h2>Ready to Build Strength Without Burning Out?</h2>
+        <h2>Move more. Without burning out.</h2>
         <p>Let your overnight recovery guide your daily progress.</p>
         <a class="store lg" href="#download" aria-label="Get started with OwlyGo: download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Get started with OwlyGo</small><b>Download on iOS</b></span></a>
       </div>
