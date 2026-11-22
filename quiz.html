@@ -118,7 +118,7 @@
         <p class="why" id="r-why"></p>
         <ul id="r-list"></ul>
         <div class="app">
-          <p><b>In the app, Owly doesn't need to ask.</b> It reads last night's sleep, heart rate variability and resting heart rate from Apple Health, checks them against your usual, and works out today's weights.</p>
+          <p><b>In the app, Owly doesn't need to ask.</b> It reads last night's sleep, heart rate variability and resting heart rate from Apple Health, checks them against your usual, and sets today's move.</p>
           <a class="cta" href="index.html#download">Get OwlyGo</a>
         </div>
         <button class="again" id="again">Start again</button>
@@ -136,8 +136,7 @@
   var current = 0;
 
   // Main lifts by goal, as in the app's rules (sets x reps).
-  var mainLifts = { stronger: '3 sets of 4 to 6 reps', muscle: '3 sets of 6 to 10 reps', tone: '3 sets of 6 to 10 reps, with shorter rests', health: '2 sets of 8 to 12 reps' };
-  var walkMinutes = { stronger: '20', muscle: '20', tone: '30', health: '30' };
+  var mainLifts = { stronger: '3 sets of 8 to 12 reps (4 to 6 once you\'re experienced)', muscle: '3 sets of 8 to 12 reps', tone: '3 sets of 6 to 10 reps, with shorter rests', health: '2 sets of 8 to 12 reps' };
 
   function show(index) {
     steps.forEach(function (step, i) { step.classList.toggle('active', i === index); });
@@ -157,11 +156,11 @@
     if (a.sleep === 'short' || a.body === 'tired') {
       return { kind: 'lighter', tag: 'Lighter day', title: 'A lighter session ' + where,
         why: 'A short night or a tired body may mean today is better a notch easier. You still get something good done.',
-        list: ['Keep your usual weights, no heavier', 'One fewer set on the main lifts', 'Stop each set with a rep or two more in the tank than usual', 'Or an easy ' + walkMinutes[a.goal] + '-minute walk instead'] };
+        list: ['Keep your usual weights, no heavier', 'One fewer set on the main lifts', 'Or move it to later in the week'] };
     }
     return { kind: 'full', tag: 'Ready to train', title: 'Your planned strength session ' + where,
       why: 'You slept well and feel fresh, so today is a good day for the full plan.',
-      list: ['A 10-minute warm-up, then 1 or 2 lighter ramp-up sets', 'Main lifts: ' + mainLifts[a.goal], 'Stop each set with 1 to 3 reps still in the tank', 'If every set reaches the top of the range, a little more weight next time, when you say yes'] };
+      list: ['A 10-minute warm-up, then one lighter warm-up set', 'Main lifts: ' + mainLifts[a.goal], 'Stop each set with 1 to 3 reps still in the tank', 'If every set reaches the top of the range, a little more weight next time, when you say yes'] };
   }
 
   function finish() {
