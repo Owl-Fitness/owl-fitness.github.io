@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask Owly: what should you do today?</title>
+<meta name="description" content="Four quick questions, and Owly suggests one move for today: a full session, a lighter one, or an easy day. The OwlyGo app reads your night from Apple Health instead of asking.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Owly's quiz (founder, Nov 22): a static page for ads and posts that ends at the App Store.
+     Nothing is saved or sent anywhere; the answers stay in the page. Its suggestions follow the
+     app's rules in plain words (Green, Yellow, Red, pain eases the plan, the goals' rep ranges). -->
+<style>
+  :root {
+    --linen: #F9F6F1; --oat: #F1EBE2; --card: #FFFFFF; --ink: #2A2030; --fig: #594157;
+    --fig-deep: #3E2C3C; --lavender: #8E7DBE; --lavender-soft: #ECE8F6; --sage: #3F7D57;
+    --sage-soft: #E2EFE6; --amber: #B9651F; --amber-soft: #F8EADB; --marine: #3F6F98;
+    --marine-soft: #E3EDF5; --muted: #6B5F68; --line: #E4DCD0; --radius: 22px;
+    --shadow: 0 1px 2px rgba(42,32,48,.05), 0 12px 32px -12px rgba(42,32,48,.18);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--linen); color: var(--ink); font: 400 17px/1.6 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; letter-spacing: -0.015em; margin: 0; line-height: 1.15; }
+  h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); }
+  h2 { font-size: clamp(1.4rem, 3.6vw, 1.8rem); }
+  p { margin: 0; }
+  a { color: inherit; }
+  .wrap { width: min(640px, 100% - 32px); margin-inline: auto; }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.2rem Fraunces, Georgia, serif; }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
+  nav a.home { font-size: .95rem; font-weight: 500; color: var(--muted); text-decoration: none; }
+  main { padding: 24px 0 72px; }
+  .owl { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: var(--oat); margin-bottom: 18px; }
+  .owl img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .intro { display: grid; gap: 12px; margin-bottom: 28px; }
+  .intro p { color: var(--muted); }
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(22px, 4vw, 32px); }
+  .progress { display: flex; gap: 6px; margin-bottom: 20px; }
+  .progress span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
+  .progress span.on { background: var(--lavender); }
+  .step { display: none; }
+  .step.active { display: grid; gap: 18px; }
+  .options { display: grid; gap: 10px; }
+  .options button { font: 500 1rem Inter, sans-serif; color: var(--ink); text-align: left; background: var(--linen); border: 1.5px solid var(--line); border-radius: 16px; padding: 15px 18px; cursor: pointer; min-height: 52px; transition: border-color .15s, background .15s; }
+  .options button:hover, .options button:focus-visible { border-color: var(--lavender); background: var(--lavender-soft); outline: none; }
+  .back { justify-self: start; background: none; border: 0; font: 500 .95rem Inter, sans-serif; color: var(--muted); cursor: pointer; padding: 8px 0; }
+  .result .tag { justify-self: start; font: 700 .72rem Inter; letter-spacing: .1em; text-transform: uppercase; padding: 6px 10px; border-radius: 8px; }
+  .tag.full { color: var(--sage); background: var(--sage-soft); }
+  .tag.lighter { color: var(--amber); background: var(--amber-soft); }
+  .tag.easy { color: var(--marine); background: var(--marine-soft); }
+  .result .why { color: var(--muted); }
+  .result ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .app { background: var(--fig-deep); color: #fff; border-radius: 18px; padding: 20px; display: grid; gap: 10px; }
+  .app p { color: rgba(255,255,255,.82); font-size: .98rem; }
+  .app a.cta { justify-self: start; background: #fff; color: var(--ink); text-decoration: none; font-weight: 600; border-radius: 12px; padding: 11px 16px; }
+  .again { justify-self: start; background: none; border: 0; font: 600 .95rem Inter, sans-serif; color: var(--fig); cursor: pointer; padding: 6px 0; text-decoration: underline; }
+  .fine { margin-top: 28px; font-size: .85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<nav><div class="wrap"><a class="brand" href="index.html"><img src="assets/icon.png" alt="">OwlyGo</a><a class="home" href="index.html">Home</a></div></nav>
+<main>
+  <div class="wrap">
+    <div class="intro">
+      <div class="owl"><img src="assets/owl.png" alt="Owly, the OwlyGo coach"></div>
+      <h1>Push today, or ease off?</h1>
+      <p>Four quick questions, and Owly suggests one move for today. Nothing you tap is saved or sent anywhere.</p>
+    </div>
+
+    <div class="card" id="quiz">
+      <div class="progress" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+      <section class="step active" data-key="sleep" aria-labelledby="q1">
+        <h2 id="q1">How did you sleep last night?</h2>
+        <div class="options">
+          <button data-value="good">Well, a full night</button>
+          <button data-value="usual">About as usual</button>
+          <button data-value="short">Short or broken</button>
+        </div>
+      </section>
+
+      <section class="step" data-key="body" aria-labelledby="q2">
+        <h2 id="q2">How does your body feel?</h2>
+        <div class="options">
+          <button data-value="fresh">Fresh and ready</button>
+          <button data-value="tired">A bit tired</button>
+          <button data-value="sore">Sore, achy or something hurts</button>
+        </div>
+        <button class="back">Back</button>
+      </section>
+
+      <section class="step" data-key="goal" aria-labelledby="q3">
+        <h2 id="q3">What's your main goal?</h2>
+        <div class="options">
+          <button data-value="stronger">Get stronger</button>
+          <button data-value="muscle">Build muscle</button>
+          <button data-value="tone">Trim &amp; Tone</button>
+          <button data-value="health">General health</button>
+        </div>
+        <button class="back">Back</button>
+      </section>
+
+      <section class="step" data-key="place" aria-labelledby="q4">
+        <h2 id="q4">Where do you train?</h2>
+        <div class="options">
+          <button data-value="gym">At a gym</button>
+          <button data-value="home">At home with dumbbells</button>
+        </div>
+        <button class="back">Back</button>
+      </section>
+
+      <section class="step result" id="result" aria-live="polite">
+        <span class="tag" id="r-tag"></span>
+        <h2 id="r-title"></h2>
+        <p class="why" id="r-why"></p>
+        <ul id="r-list"></ul>
+        <div class="app">
+          <p><b>In the app, Owly doesn't need to ask.</b> It reads last night's sleep, heart rate variability and resting heart rate from Apple Health, checks them against your usual, and works out today's weights.</p>
+          <a class="cta" href="index.html#download">Get OwlyGo</a>
+        </div>
+        <button class="again" id="again">Start again</button>
+      </section>
+    </div>
+
+    <p class="fine">A suggestion for general fitness, not medical advice. If something hurts, stop, and consider talking to your doctor. You know your body best.</p>
+  </div>
+</main>
+<script>
+(function () {
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var bars = document.querySelectorAll('.progress span');
+  var answers = {};
+  var current = 0;
+
+  // Main lifts by goal, as in the app's rules (sets x reps).
+  var mainLifts = { stronger: '3 sets of 4 to 6 reps', muscle: '3 sets of 6 to 10 reps', tone: '3 sets of 6 to 10 reps, with shorter rests', health: '2 sets of 8 to 12 reps' };
+  var walkMinutes = { stronger: '20', muscle: '20', tone: '30', health: '30' };
+
+  function show(index) {
+    steps.forEach(function (step, i) { step.classList.toggle('active', i === index); });
+    for (var i = 0; i < bars.length; i++) bars[i].classList.toggle('on', i < Math.min(index + 1, 4));
+    current = index;
+    var first = steps[index].querySelector('button');
+    if (first && index > 0) first.focus({ preventScroll: true });
+  }
+
+  function suggestion(a) {
+    var where = a.place === 'home' ? 'with your dumbbells at home' : 'at the gym';
+    if (a.body === 'sore') {
+      return { kind: 'easy', tag: 'Easy day', title: 'A gentle Flow session, or rest',
+        why: 'When something is sore or hurts, Owly eases the plan. Rest counts as progress.',
+        list: ['About 15 minutes of easy mobility and long, slow stretches', 'Or a short, easy walk if that feels good', 'Skip anything that loads the sore spot'] };
+    }
+    if (a.sleep === 'short' || a.body === 'tired') {
+      return { kind: 'lighter', tag: 'Lighter day', title: 'A lighter session ' + where,
+        why: 'A short night or a tired body may mean today is better a notch easier. You still get something good done.',
+        list: ['Keep your usual weights, no heavier', 'One fewer set on the main lifts', 'Stop each set with a rep or two more in the tank than usual', 'Or an easy ' + walkMinutes[a.goal] + '-minute walk instead'] };
+    }
+    return { kind: 'full', tag: 'Ready to train', title: 'Your planned strength session ' + where,
+      why: 'You slept well and feel fresh, so today is a good day for the full plan.',
+      list: ['A 10-minute warm-up, then 1 or 2 lighter ramp-up sets', 'Main lifts: ' + mainLifts[a.goal], 'Stop each set with 1 to 3 reps still in the tank', 'If every set reaches the top of the range, a little more weight next time, when you say yes'] };
+  }
+
+  function finish() {
+    var s = suggestion(answers);
+    var tag = document.getElementById('r-tag');
+    tag.textContent = s.tag;
+    tag.className = 'tag ' + s.kind;
+    document.getElementById('r-title').textContent = s.title;
+    document.getElementById('r-why').textContent = s.why;
+    var list = document.getElementById('r-list');
+    list.innerHTML = '';
+    s.list.forEach(function (item) { var li = document.createElement('li'); li.textContent = item; list.appendChild(li); });
+    show(steps.length - 1);
+    document.getElementById('r-title').focus && document.getElementById('r-title').setAttribute('tabindex', '-1');
+    document.getElementById('r-title').focus({ preventScroll: true });
+  }
+
+  steps.forEach(function (step, index) {
+    var key = step.getAttribute('data-key');
+    step.querySelectorAll('.options button').forEach(function (button) {
+      button.addEventListener('click', function () {
+        answers[key] = button.getAttribute('data-value');
+        if (index + 1 < steps.length - 1) show(index + 1); else finish();
+      });
+    });
+    var back = step.querySelector('.back');
+    if (back) back.addEventListener('click', function () { show(index - 1); });
+  });
+  document.getElementById('again').addEventListener('click', function () { answers = {}; show(0); });
+})();
+</script>
+</body>
+</html>
