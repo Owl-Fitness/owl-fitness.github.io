@@ -134,7 +134,9 @@
     display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 14px;
     background: var(--card); border: 1px solid var(--line); font-weight: 600; font-size: 1rem;
   }
-  .chip i { font-style: normal; font-size: 1.2rem; }
+  .chip i { font-style: normal; display: inline-grid; place-items: center; color: var(--fig); }
+  .chip i svg { width: 20px; height: 20px; }
+  .move .ic svg { width: 26px; height: 26px; color: var(--c); }
   .strip p { color: var(--muted); font-size: .95rem; }
 
   /* Cards */
@@ -195,6 +197,8 @@
   @media (max-width: 900px) { .features { grid-template-columns: 1fr; } }
 
   /* Scenes from a busy week */
+  .owl-mini { justify-self: center; width: 96px; height: 96px; border-radius: 50%; background: var(--linen); overflow: hidden; }
+  .owl-mini img { width: 100%; height: 100%; object-fit: cover; }
   .scene { display: grid; gap: 14px; align-content: start; }
   .scene .tag { justify-self: start; font: 700 .72rem Inter; letter-spacing: .1em; text-transform: uppercase; color: var(--fig); background: var(--amber-soft); padding: 6px 10px; border-radius: 8px; }
   .scene-line { margin: 0; font: 500 1.15rem/1.5 Fraunces, serif; color: var(--ink, inherit); }
@@ -219,6 +223,8 @@
   .cta-band p { color: rgba(255,255,255,.78); font-size: 1.1rem; margin-top: 14px; max-width: 520px; }
   .cta-band .store { background: #fff; color: var(--ink) !important; margin-top: 28px; }
   .cta-band .store:hover { background: var(--oat); }
+  .cta-band .launch-note { margin-top: 14px; font-size: .95rem; }
+  .launch-note a { color: inherit; text-decoration: underline; }
   .cta-band .owl { width: 200px; height: 200px; border-radius: 50%; background: var(--linen); overflow: hidden; box-shadow: 0 0 0 10px rgba(255,255,255,.08); }
   @media (max-width: 760px) { .cta-band { grid-template-columns: 1fr; } .cta-band .owl { width: 140px; height: 140px; order: -1; } }
 
@@ -258,14 +264,14 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <span class="badge">⚡ Powered by Your Apple Health Recovery Metrics</span>
+      <span class="badge">Reads your overnight recovery from Apple Health</span>
       <h1>The coach that knows when to push, <em>and when to ease off.</em></h1>
       <p class="lede">Owly reads how you slept and recovered, then suggests one move for today, with the weights worked out. Made for busy people with busy weeks.</p>
       <p class="beats">Reads your night. Picks your move. Adjusts as you go.</p>
       <a class="store lg" href="#download" aria-label="Download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Download on the</small><b>App Store</b></span></a>
       <div class="trust">
-        <span>Designed for busy parents &amp; professionals (30+)</span>
-        <span>Syncs via Apple Health</span>
+        <span>Made for busy adults, 30+</span>
+        <span>Your data stays on your iPhone</span>
         <span>First month free</span>
       </div>
     </div>
@@ -285,10 +291,10 @@
   <div class="wrap">
     <div class="eyebrow">Works with your favorite wearable</div>
     <div class="chips">
-      <span class="chip"><i>⌚</i>Apple Watch</span>
-      <span class="chip"><i>💍</i>Oura Ring</span>
-      <span class="chip"><i>⚡</i>WHOOP Band</span>
-      <span class="chip"><i>📱</i>Apple Health Hub</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3"/></svg></i>Apple Watch</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M9.5 6.5L12 4l2.5 2.5"/></svg></i>Oura Ring</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="8" rx="4"/><path d="M10 8v8M14 8v8"/></svg></i>WHOOP Band</span>
+      <span class="chip"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></i>Apple Health</span>
     </div>
     <p>OwlyGo reads synced overnight HRV and sleep data from any device connected to Apple Health.</p>
   </div>
@@ -306,7 +312,7 @@
         <span class="num">01</span>
         <h3>The "All-or-Nothing" Trap</h3>
         <div class="problem"><div class="label">The problem</div>You finally find 30 free minutes to work out, but you're running on 5 hours of sleep. You push through a high-intensity workout anyway, end up painfully sore for three days, crash, and quit for two weeks.</div>
-        <div class="fix"><div class="label">The OwlyGo fix</div>Owly scales your daily weight and rep targets to match your actual physiological energy.</div>
+        <div class="fix"><div class="label">The OwlyGo fix</div>Owly scales today's weights and reps to how you actually recovered.</div>
       </article>
       <article class="card pain reveal">
         <span class="num">02</span>
@@ -349,7 +355,7 @@
       <div class="step card reveal">
         <div class="shot"><img src="assets/workout_sunlit.jpg" alt="A live OwlyGo workout: goblet squat, 10 lb for 6 reps, with a drawing of the move" loading="lazy"></div>
         <div class="row"><span class="n">3</span><h3>Do Today's Move</h3></div>
-        <p>High-recovery day? Owly steps up your weights and reps when you're ready. Low-recovery day? Owly turns your session into a light mobility flow or a rest day.</p>
+        <p>High-recovery day? Owly offers a step up in weights or reps, and it only happens on your yes. Low-recovery day? Owly turns your session into a light mobility flow or a rest day.</p>
       </div>
     </div>
   </div>
@@ -363,10 +369,10 @@
       <p class="lede">Every day brings one clear, single-focus suggestion, in line with your weekly health or muscle-building goals.</p>
     </div>
     <div class="grid4">
-      <article class="card move strength reveal"><div class="ic">💪</div><h3>Strength</h3><p>Home or gym. Dumbbell or barbell workouts with your weights, reps and sets worked out for you.</p></article>
-      <article class="card move cardio reveal"><div class="ic">🏃</div><h3>Cardio</h3><p>Walking or running, outside or on a treadmill, plus cycling or swimming, sized to how recovered you are.</p></article>
-      <article class="card move flow reveal"><div class="ic">🧘</div><h3>Flow</h3><p>Guided mobility, dynamic stretches and joint care for active recovery on medium-energy days.</p></article>
-      <article class="card move rest reveal"><div class="ic">😴</div><h3>Rest</h3><p>Easy recovery days, where resting counts as real progress toward the long game.</p></article>
+      <article class="card move strength reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"/></svg></div><h3>Strength</h3><p>Home or gym. Dumbbell or barbell workouts with your weights, reps and sets worked out for you.</p></article>
+      <article class="card move cardio reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Cardio</h3><p>Walking or running, outside or on a treadmill, plus cycling or swimming, sized to how recovered you are.</p></article>
+      <article class="card move flow reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12c3-4 6-4 9 0s6 4 9 0M3 18c3-4 6-4 9 0s6 4 9 0"/><circle cx="12" cy="5" r="2"/></svg></div><h3>Flow</h3><p>Guided mobility, dynamic stretches and joint care for active recovery on medium-energy days.</p></article>
+      <article class="card move rest reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></div><h3>Rest</h3><p>Easy recovery days, where resting counts as real progress toward the long game.</p></article>
     </div>
   </div>
 </section>
@@ -383,7 +389,7 @@
         <div class="feat card reveal">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
           <h3>Load &amp; Rep Scaling</h3>
-          <p>Never guess your weights again. When your overnight HRV is well below your usual, OwlyGo dials back today's volume, so a short night doesn't turn into a hard session.</p>
+          <p>Type a weight once and Owly remembers it. When your overnight HRV is well below your usual, OwlyGo dials back today's volume, so a short night doesn't turn into a hard session.</p>
         </div>
         <div class="feat card reveal">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"/></svg></div>
@@ -405,13 +411,41 @@
   </div>
 </section>
 
+<!-- 6b. Trust (founder, Nov 22): privacy, ACSM and the user's yes. "Reviewed by a strength coach"
+     waits until the clinical advisor's review is done. -->
+<section>
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>Private, Grounded, Yours</h2>
+    </div>
+    <div class="grid3">
+      <div class="feat card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>Your data stays on your iPhone</h3>
+        <p>No account, no server, no AI model. Your readings stay on your iPhone and Apple Watch, and in your own iCloud Backup if you use it.</p>
+      </div>
+      <div class="feat card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg></div>
+        <h3>Built from ACSM guidance</h3>
+        <p>Reps, rests and the shape of your week follow the American College of Sports Medicine's guidance.</p>
+      </div>
+      <div class="feat card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div>
+        <h3>Weights rise on your yes</h3>
+        <p>Owly suggests a step up. Nothing changes until you say yes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- 7. Scenes from a busy week (founder, Nov 19). Moments the app handles, not customer quotes:
      real beta testers' words go here only with their permission. -->
 <section>
   <div class="wrap">
     <div class="head center reveal">
+      <div class="owl-mini"><img src="assets/owl.png" alt="Owly, the OwlyGo coach" loading="lazy"></div>
       <h2>Built for Days Like These</h2>
-      <p class="lede">A busy week rarely goes to plan. OwlyGo bends with it.</p>
+      <p class="lede">A busy week rarely goes to plan. Owly bends with it.</p>
     </div>
     <div class="grid3">
       <article class="card scene reveal">
@@ -479,6 +513,7 @@
         <h2>Move more. Without burning out.</h2>
         <p>Let your overnight recovery guide your daily progress.</p>
         <a class="store lg" href="#download" aria-label="Get started with OwlyGo: download on the App Store"><svg aria-hidden="true"><use href="#phone-ic"/></svg><span><small>Get started with OwlyGo</small><b>Download on iOS</b></span></a>
+        <p class="launch-note">Coming soon to the App Store. <a href="mailto:hello@owlygo.app?subject=Tell%20me%20when%20OwlyGo%20launches">Get a note when it launches</a>.</p>
       </div>
       <div class="owl"><img src="assets/owl.png" alt="Owly, the OwlyGo coach"></div>
     </div>
