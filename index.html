@@ -236,6 +236,12 @@
   footer .links a:hover { text-decoration: underline; }
   footer .fine { font-size: .82rem; }
 
+  .tour-strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 230px); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 18px; margin-top: 8px; -webkit-overflow-scrolling: touch; }
+  .tour-strip figure { margin: 0; scroll-snap-align: start; display: grid; gap: 12px; }
+  .tour-strip img { width: 100%; aspect-ratio: 542 / 1178; border-radius: 28px; box-shadow: 0 18px 40px rgba(42,32,48,.14); background: #fff; display: block; }
+  .tour-strip figcaption { font-size: .95rem; color: var(--muted); text-align: center; }
+  .tour-strip figcaption b { display: block; color: var(--ink); font-size: 1rem; }
+  @media (min-width: 1180px) { .tour-strip { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); overflow: visible; } }
   .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
@@ -355,10 +361,27 @@
         <p>Open OwlyGo to see your recovery status. Before you even get out of bed, Owly checks your readings against your usual and prepares your session.</p>
       </div>
       <div class="step card reveal">
-        <div class="shot"><img src="assets/workout_sunlit.jpg" alt="A live OwlyGo workout: goblet squat, 10 lb for 6 reps, with a drawing of the move" loading="lazy"></div>
+        <div class="shot"><img src="assets/workout_lift_woman.jpg" alt="A live OwlyGo workout: dumbbell bench press, 25 lb for 8 reps" loading="lazy"></div>
         <div class="row"><span class="n">3</span><h3>Do Today's Move</h3></div>
         <p>High-recovery day? Owly offers a step up in weights or reps, and it only happens on your yes. Low-recovery day? Owly turns your session into a light mobility flow or a rest day.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4b. Inside a workout -->
+<section id="workout">
+  <div class="wrap">
+    <div class="head center reveal">
+      <h2>Inside a Workout</h2>
+      <p class="lede">Warm up, lift, breathe, cool down. Owly guides each step.</p>
+    </div>
+    <div class="tour-strip reveal" role="list">
+      <figure role="listitem"><img src="assets/workout_preview.jpg" alt="Today's workout in pictures: a 5-minute warm-up, two stretches, seven strength exercises and breathing, 45 minutes in all" loading="lazy"><figcaption><b>See the day first</b>Every step in pictures.</figcaption></figure>
+      <figure role="listitem"><img src="assets/workout_warmup.jpg" alt="Warm-up card: an easy treadmill walk or bike ride for 5 minutes, keeping it easy under 125 bpm" loading="lazy"><figcaption><b>Warm up easy</b>Five minutes to get moving.</figcaption></figure>
+      <figure role="listitem"><img src="assets/workout_lift_woman.jpg" alt="A workout in progress: dumbbell bench press, exercise 1 of 7, 25 lb for 8 reps, stopping with 1 to 3 reps left" loading="lazy"><figcaption><b>Lift with a guide</b>Your weight, your reps.</figcaption></figure>
+      <figure role="listitem"><img src="assets/workout_lift_man.jpg" alt="A workout in progress: lat pulldown, exercise 3 of 7, 100 lb for 10 reps" loading="lazy"><figcaption><b>A woman or a man</b>Pick the figure you prefer.</figcaption></figure>
+      <figure role="listitem"><img src="assets/workout_breathing.jpg" alt="Cool-down: box breathing, round 1 of 4, breathe in for 4" loading="lazy"><figcaption><b>Breathe and stretch</b>A calm cool-down to finish.</figcaption></figure>
     </div>
   </div>
 </section>
